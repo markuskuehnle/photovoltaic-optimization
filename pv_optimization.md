@@ -1,259 +1,252 @@
-## Optimierung einer Photovoltaik-Anlage
+## Optimization of a Photovoltaic System
 
-In diesem Projekt wurde ich als Berater hinzugezogen, um Optionen zur mathematischen Optimierung für eine Elektrolyseanlage eines Energieunternehmens zu erarbeiten. Durch die Kombination von Simulationstechniken und fortgeschrittenem Machine Learning zielt mein Ansatz darauf ab, die Energieflüsse innerhalb des Systems zu maximieren und den Wasserstoffoutput zu optimieren. In diesem Notebook wird detailliert beschrieben, wie ich durch gezielte Optimierung und präzise Vorhersagemodelle die Energieeffizienz und Leistung der PV-Anlage verbessern konnte.
+In this project, I was brought in as a consultant to develop mathematical optimization options for an electrolysis plant of an energy company. By combining simulation techniques and advanced machine learning, my approach aims to maximize energy flows within the system and optimize hydrogen output. This notebook describes in detail how targeted optimization and precise forecasting models improved the energy efficiency and performance of the PV system.
 
-### 1. Beschreibung des Problems
+### 1. Problem Description
 
-#### 1.1 Systemkomponenten
+#### 1.1 System Components
 
-- PV-Anlage (Photovoltaik)
-- Hausverbrauch (inkl. Wärmepumpe)
-- Batterie
-- Elektrolyseur
+- PV system (photovoltaics)
+- Household consumption (including heat pump)
+- Battery
+- Electrolyzer
 
-#### 1.2 Ziel der Optimierung
+#### 1.2 Optimization Goal
 
-Die Last der Wärmepumpe, des Hausverbrauchs und die Leistung der PV-Anlage sollen zur Vereinfachung als eine Größe betrachtet werden. Zum Ausgleich soll die Batterie entweder be- oder entladen werden. Die Elektrolyse soll möglichst viel Leistung aufnehmen, um den Wasserstoffoutput zu maximieren, ohne dass Strom aus dem Netz bezogen wird.
+The load from the heat pump, household consumption, and PV system performance should be simplified into one value. To balance the system, the battery should either charge or discharge. The electrolyzer should absorb as much power as possible to maximize hydrogen output without drawing power from the grid.
 
-**Betrachtungszeitraum:**
-Es sollen nur die Sommermonate betrachtet werden, in denen die PV-Anlage auch so viel produziert, dass das realistisch ist.
+**Analysis period:** 
+Only the summer months, during which the PV system generates enough power to make this realistic, should be considered.
 
-**Erwartetes Ergebnis:**
-- größtmöglicher Wasserstoffoutput
-- die optimalen Energieflüsse, um diesen Output zu erreichen
+**Expected result:**
+- Maximum hydrogen output
+- Optimal energy flows to achieve this output
 
-### 2. Betrachtete Probleme
+### 2. Considered Problems
 
-1. **Optimierung der Be- und Entladezyklen**
-    - Wie können die Lade- und Entladezyklen der Batterie so optimiert werden, dass der Wasserstoffoutput maximiert wird?
-    - Welche Algorithmen eignen sich am besten zur Optimierung der Batterienutzung?
-        - Lineare Programmierung (LP)
-        - Nicht-Lineare Optimierung (NLP)
-        - Genetische Algorithmen (GA): Viele Variablen + Nichtlinearität
-        - Dynamische Programmierung (DP): Entscheidungen über mehrere Zeiträume
-        - Stochastische Programmierung (evtl. hilfreich wenn Wetterdaten berücksichtigt werden) 
+1. **Optimization of Charging and Discharging Cycles**
+   - How can the battery's charging and discharging cycles be optimized to maximize hydrogen output?
+   - Which algorithms are most suitable for optimizing battery usage?
+     - Linear programming (LP)
+     - Non-linear optimization (NLP)
+     - Genetic algorithms (GA): Many variables + nonlinearity
+     - Dynamic programming (DP): Decisions over multiple periods
+     - Stochastic programming (possibly useful if weather data is considered)
 
-2. **Energieflussgleichgewicht**
-    - Wie kann sichergestellt werden, dass die erzeugte Energie (PV-Leistung) und die verbrauchte Energie (Hausverbrauch, Elektrolyse) zu jedem Zeitpunkt im Gleichgewicht sind?
-        - Bilanzgleichung in Optimierungsproblem: Energieflussgleichgewicht
+2. **Energy Flow Balance**
+   - How can we ensure that the generated energy (PV output) and the consumed energy (household consumption, electrolysis) are balanced at all times?
+     - Balance equation in optimization problem: energy flow balance
 
-3. **Vorhersage der PV-Leistung**
-    - Wie können Wetterdaten und historische PV-Leistungsdaten verwendet werden, um genaue Vorhersagen für die PV-Leistung zu treffen?
-        - Wetterdaten weisen eine jährliche Saisonalität auf
-        - PV-Leistung hat eine circadiane Rhythmik
-    - Welche Machine-Learning-Modelle sind am effektivsten für die Vorhersage der PV-Leistung?
+3. **Forecasting PV Output**
+   - How can weather data and historical PV output data be used to accurately predict future PV output?
+     - Weather data shows yearly seasonality
+     - PV output has a circadian rhythm
+   - What machine learning models are most effective for predicting PV output?
 
-4. **Integration und Simulation der Optimierungslösung**
-    - Wie kann die Kombination aus Vorhersagemodellen und Optimierungsalgorithmen in einer Simulationsumgebung implementiert werden?
-        - Datenvorbereitung: Historische Daten zu PV-Leistung, Hausverbrauch und Wetterbedingungen sammeln und vorbereiten.
-        - Vorhersagemodell: Machine-Learning-Modell (z.B. Random Forest) zur Vorhersage der PV-Leistung und des Hausverbrauchs trainieren.
-        - Optimierungsalgorithmus: Optimierungsproblem definieren, das die Vorhersagen als Eingangsgrößen verwendet (z.B. lineare Programmierung mit pulp).
-        - Integration in Simulationsumgebung: Kombination von Vorhersagemodell und Optimierungsalgorithmus in einer Simulationsumgebung wie SimPy implementieren.
-    - Wie können die optimalen Energieflüsse simuliert und validiert werden?
-        - Langzeit-Simulation: Simulation über längere Zeiträume (Tage/Monate) zur Beobachtung der langfristigen Auswirkungen der Optimierung.
-        - Sensitivitätsanalyse: Überprüfung der Robustheit der Optimierung gegenüber Änderungen in den Eingangsgrößen (z.B. Wetterbedingungen).
-        - Vergleich mit historischen Daten: Validierung der Vorhersagemodelle durch Vergleich mit tatsächlichen historischen Daten.
-        - Szenarienanalyse: Testen verschiedener Szenarien (z.B. unterschiedliche Anfangszustände der Batterie, variierende PV-Leistung).
-        - Visuelle Darstellung: Erstellung von Diagrammen und Grafiken zur anschaulichen Darstellung der Ergebnisse der Simulation.
+4. **Integration and Simulation of the Optimization Solution**
+   - How can the combination of forecasting models and optimization algorithms be implemented in a simulation environment?
+     - Data preparation: Gather and prepare historical data on PV output, household consumption, and weather conditions.
+     - Forecasting model: Train a machine learning model (e.g., Random Forest) to predict PV output and household consumption.
+     - Optimization algorithm: Define an optimization problem that uses these forecasts as input (e.g., linear programming with pulp).
+     - Integration into simulation environment: Implement the combination of forecasting model and optimization algorithm in a simulation environment like SimPy.
+   - How can the optimal energy flows be simulated and validated?
+     - Long-term simulation: Simulate over extended periods (days/months) to observe the long-term effects of the optimization.
+     - Sensitivity analysis: Test the robustness of the optimization against changes in input variables (e.g., weather conditions).
+     - Comparison with historical data: Validate the forecasting models by comparing them to actual historical data.
+     - Scenario analysis: Test various scenarios (e.g., different initial battery states, varying PV output).
+     - Visual representation: Create charts and graphs to visually represent the simulation results.
 
-5. **Berücksichtigung der Systemgrenzen und Kapazitäten**
-    - Wie können die physikalischen Grenzen und Kapazitäten der Systemkomponenten (Batterie, PV-Anlage, Elektrolyseur) in die Optimierung einbezogen werden?
-        - Definition der Kapazitätsgrenzen und Leistung der Komponenten
-        - Anpassung der Optimierung an die aktuellen Betriebsbedingungen und Systemgrenzen in Echtzeit 
-    - Wie kann die Lade- und Entladeleistung der Batterie innerhalb der festgelegten Grenzen gehalten werden?
-        - Leistungsgrenzen
-        - Energieflussgleichgewicht
-        - Anpassung der Zielfunktion: Evtl. Einbeziehung von Straf-Termen in die Zielfunktion, um extreme Lade- und Entladezyklen zu vermeiden und die Batterie innerhalb der sicheren Grenzen zu betreiben
+5. **Considering System Boundaries and Capacities**
+   - How can the physical limits and capacities of the system components (battery, PV system, electrolyzer) be included in the optimization?
+     - Define capacity limits and performance of components
+     - Adjust the optimization to current operating conditions and system limits in real-time
+   - How can the charging and discharging of the battery be kept within the established limits?
+     - Performance limits
+     - Energy flow balance
+     - Adjust the objective function: Possibly include penalty terms to avoid extreme charging/discharging cycles and operate the battery within safe limits
 
-6. **Weitere Überlegungen**
-    - Gibt es Effizienzverluste oder zeitliche Einschränkungen?
+6. **Other Considerations**
+   - Are there efficiency losses or time constraints?
 
-### 3. Mathematische Modellierung
+### 3. Mathematical Modeling
 
-#### 3.1 Variablendefinition
+#### 3.1 Variable Definitions
 
-- $P_{\text{PV}}(t)$: Leistung der PV-Anlage zu Zeit $(t)$
-- $P_{\text{Haus}}(t)$: Hausverbrauch zu Zeit $(t)$
-- $P_{\text{Bat, In}}(t)$: Ladeleistung der Batterie zu Zeit $(t)$
-- $P_{\text{Bat, Out}}(t)$: Entladeleistung der Batterie zu Zeit $(t)$
-- $P_{\text{Elek}}(t)$: Leistung des Elektrolyseurs zu Zeit $(t)$
-- $P_{\text{Wasserstoff}}(t)$: Wasserstoffproduktion zu Zeit $(t)$
-- $E_{\text{Bat, Max}}(t)$: Maximale Kapazität der Batterie zu Zeit $(t)$
-- $\text{SoC}_{\text{Batterie}}(t)$: Batterieladung zu Zeit $(t)$
-- $\eta$ : Wirkungsgrad des Elektrolyseurs (?) 
+- $P_{\text{PV}}(t)$: Power from PV system at time $(t)$
+- $P_{\text{House}}(t)$: Household consumption at time $(t)$
+- $P_{\text{Bat, In}}(t)$: Battery charging power at time $(t)$
+- $P_{\text{Bat, Out}}(t)$: Battery discharging power at time $(t)$
+- $P_{\text{Electro}}(t)$: Electrolyzer power at time $(t)$
+- $P_{\text{Hydrogen}}(t)$: Hydrogen production at time $(t)$
+- $E_{\text{Bat, Max}}(t)$: Maximum battery capacity at time $(t)$
+- $\text{SoC}_{\text{Battery}}(t)$: Battery state of charge at time $(t)$
+- $\eta$: Efficiency of the electrolyzer (?)
 
+#### 3.2 Optimization Goal / Objective Function
 
-#### 3.2 Optimierungsziel / Zielfunktion
-
-Maximierung des Wasserstoffoutputs über den betrachteten Zeitraum:
-
-$$
-\text{Maximiere} \sum_{t} P_{\text{Wasserstoff}}(t)
-$$
+Maximize hydrogen output over the analysis period:
 
 $$
-\text{Maximiere} \sum_{t=1}^{T} P_{\text{Wasserstoff}}(t) = \eta \sum_{t=1}^{T} P_{\text{Elek}}(t)
+\text{Maximize} \sum_{t} P_{\text{Hydrogen}}(t)
 $$
 
-#### 3.3 Randbedingungen
+$$
+\text{Maximize} \sum_{t=1}^{T} P_{\text{Hydrogen}}(t) = \eta \sum_{t=1}^{T} P_{\text{Electro}}(t)
+$$
 
-**PV System Leistung:**
+#### 3.3 Constraints
+
+**PV System Output:**
 
 $$
 P_{\text{PV}} = 80 \, \text{kWp}
 $$
 
-Kombinierte Last der Wärmepumpe, des Hausverbrauchs und der PV-Leistung als Netto-Last:
+Combined load of the heat pump, household consumption, and PV output as net load:
 
 $$
-P_{\text{Netto}}(t) = P_{\text{Haus}}(t) - P_{\text{PV}}(t)
+P_{\text{Net}}(t) = P_{\text{House}}(t) - P_{\text{PV}}(t)
 $$
 
-**Batterie:**
+**Battery:**
 
-*Maximale Batterie-Leistung:*
+*Maximum battery capacity:*
 
 $$
 E_{\text{Bat, max}} = 80 \, \text{kWh}
 $$
 
-*Batterie Input und Output:*
+*Battery input and output:*
 
 $$
 P_{\text{Bat, in}} = P_{\text{Bat, out}} \leq 80 \, \text{kW}
 $$
 
-*Sachlogische Grenzwerte (Batterie-Kapazität):*
+*Logical bounds (battery capacity):*
 
 $$
-0 \leq \text{SoC}_{\text{Batterie}} \leq E_{\text{Bat, max}}
+0 \leq \text{SoC}_{\text{Battery}} \leq E_{\text{Bat, max}}
 $$
 
-### Batteriestatusupdate
-$$ 
-\text{SoC}_{\text{Batterie}}(t+1) = \text{SoC}_{\text{Batterie}}(t) + \left(P_{\text{Bat, in}}(t) - P_{\text{Bat, out}}(t)\right) \Delta t 
-$$
-
-**Elektrolyse Leistung:**
+**Battery state update:**
 
 $$
-P_{\text{Elek}} = \begin{cases} 
+\text{SoC}_{\text{Battery}}(t+1) = \text{SoC}_{\text{Battery}}(t) + \left(P_{\text{Bat, in}}(t) - P_{\text{Bat, out}}(t)\right) \Delta t
+$$
+
+**Electrolyzer power:**
+
+$$
+P_{\text{Electro}} = \begin{cases} 
 0 \, \text{kW} \\
-1.28 \, \text{kW} \leq P_{\text{Elek}} \leq 9.38 \, \text{kW}
+1.28 \, \text{kW} \leq P_{\text{Electro}} \leq 9.38 \, \text{kW}
 \end{cases}
 $$
 
-**Energieflussgleichgewicht:**
+**Energy flow balance:**
 
 $$
-P_{\text{Netto}}(t) + P_{\text{Batterie, Entlade}}(t) = P_{\text{Batterie, Lade}}(t) + P_{\text{Elek}}(t)
+P_{\text{Net}}(t) + P_{\text{Battery, Discharge}}(t) = P_{\text{Battery, Charge}}(t) + P_{\text{Electro}}(t)
 $$
 
-### 4. Lösungsansatz
+### 4. Solution Approach
 
-#### 4.1 Lineare Optimierung
+#### 4.1 Linear Optimization
 
-**Voraussetzungen:**
-- Daten: Zeitreihen für $P_{\text{PV}}(t)$ und $P_{\text{Haus}}(t)$
-- Datenvorbereitung: Leistungsgrenzen definieren
+**Requirements:**
+- Data: Time series for $P_{\text{PV}}(t)$ and $P_{\text{House}}(t)$
+- Data preparation: Define performance limits
 
-**Weitere Überlegungen:** 
-- jährliche Saisonalität der Wetterdaten
-- Abhängigkeit von circadianer Rhythmik (e.g. In/Out PV nachts)
+**Additional considerations:**
+- Annual seasonality of weather data
+- Circadian rhythm dependence (e.g., In/Out PV at night)
 
-**Fragestellung:** 
-- Optimierung für Tage oder auch für Monate möglich?
+**Key Question:**
+- Is optimization possible for both days and months?
 
-**Simulation der Optimierungslösung**
+**Simulation of Optimization Solution**
 
-Mögliche Algorithmen zur Simulation der Optimierungslösung:
+Possible algorithms for simulating the optimization solution:
 
-- **Monte-Carlo-Simulation:**
-    - Simuliert eine große Anzahl möglicher Szenarien basierend auf stochastischen Eingangsgrößen (z.B. PV-Leistung, Hausverbrauch).
-    - Passend, um Unsicherheiten und Variabilitäten in den Daten zu berücksichtigen.
+- **Monte Carlo Simulation:**
+  - Simulates a large number of possible scenarios based on stochastic input variables (e.g., PV output, household consumption).
+  - Suitable for considering uncertainties and variabilities in the data.
 
-- **Agentenbasierte Simulation:**
-    - Modelliert individuelle Systemkomponenten (z.B. Batterie, Elektrolyseur) als "Agenten" mit spezifischem Verhalten.
-    - Hilfreich zur Untersuchung des Zusammenspiels und der Interaktionen zwischen verschiedenen Systemkomponenten.
+- **Agent-based Simulation:**
+  - Models individual system components (e.g., battery, electrolyzer) as "agents" with specific behaviors.
+  - Useful for examining interactions between various system components.
 
-- **Deterministische Simulation:**
-    - Verwendet feste Eingabewerte (z.B. vorhergesagte PV-Leistung) zur Simulation.
-    - Nützlich zur Validierung der Optimierungsergebnisse unter idealisierten Bedingungen.
+- **Deterministic Simulation:**
+  - Uses fixed input values (e.g., predicted PV output) for simulation.
+  - Helpful for validating optimization results under ideal conditions.
 
-#### 4.2 Vorhersage der PV-Leistung mittels Machine Learning
+### 4.2 Predicting PV Output Using Machine Learning
 
-**Voraussetzungen:**
-- Daten (siehe oben)
-- Wetterdaten (open-meteo API)
-- Feature Engineering (Tageszeit, Temperatur, Sonneneinstrahlung, Bewölkungsgrad, etc. könnten nützlich sein)
+**Requirements:**
+- Data (see above)
+- Weather data (open-meteo API)
+- Feature Engineering (Time of day, temperature, solar irradiance, cloud cover, etc., may be useful)
 
-**Ansatz:**
-einfache Regressionsmodelle wie Random Forest/Gradient Boosting
+**Approach:**
+Simpler regression models like Random Forest or Gradient Boosting
 
-**Wichtiger Hinweis:** Dieser Ansatz ist sehr komplex und vor allem fehleranfällig, da eine geringe Vorhersageabweichung über Stunden/Tage akkumuliert. Zudem erfordert es ein hohes Maß an Datenvorbereitung und Feature Engineering.
+**Important Note:** This approach is quite complex and particularly error-prone, as even minor prediction errors accumulate over hours/days. It also requires a high degree of data preparation and feature engineering.
 
-### 5. Implementierung der Optimierung und Simulation
+### 5. Implementing Optimization and Simulation
 
-#### 5.1 Beispielcode
-
-Hier ist ein Beispielcode, der zeigt, wie die Optimierung der Be- und Entladezyklen der Batterie zur Maximierung des Wasserstoffoutputs in Python implementiert werden könnte:
+Here is a sample code that shows how to implement the optimization of battery charge and discharge cycles to maximize hydrogen output in Python:
 
 ```python
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 import pulp
 
-# Daten generieren (Beispiel)
+# Generate data (example)
 np.random.seed(42)
-zeitraum = 24
-temperatur = np.random.uniform(15, 30, zeitraum)
-sonneneinstrahlung = np.random.uniform(0, 1, zeitraum)
-bewölkungsgrad = np.random.uniform(0, 1, zeitraum)
-tageszeit = np.arange(zeitraum)
+time_period = 24
+temperature = np.random.uniform(15, 30, time_period)
+solar_irradiance = np.random.uniform(0, 1, time_period)
+cloud_cover = np.random.uniform(0, 1, time_period)
+time_of_day = np.arange(time_period)
 
-# RF-Modell trainieren (Beispiel)
-X = np.column_stack((temperatur, sonneneinstrahlung, bewölkungsgrad, tageszeit))
-y = np.random.uniform(0, 80, zeitraum)  # PV-Leistung
+# Train RF model (example)
+X = np.column_stack((temperature, solar_irradiance, cloud_cover, time_of_day))
+y = np.random.uniform(0, 80, time_period)  # PV Output
 
 rf = RandomForestRegressor(n_estimators=100)
 rf.fit(X, y)
 pv_forecast = rf.predict(X)
 
-# Optimierungsproblem definieren
+# Define optimization problem
 model = pulp.LpProblem("Maximize_Hydrogen_Output", pulp.LpMaximize)
 
-P_Batterie_Lade = pulp.LpVariable.dicts("P_Batterie_Lade", range(zeitraum), lowBound=0, upBound=80)
-P_Batterie_Entlade = pulp.LpVariable.dicts("P_Batterie_Entlade", range(zeitraum), lowBound=0, upBound=80)
-P_Elektrolyseur = pulp.LpVariable.dicts("P_Elektrolyseur", range(zeitraum), lowBound=0, upBound=9.38)
-SoC_Batterie = pulp.LpVariable.dicts("SoC_Batterie", range(zeitraum + 1), lowBound=0, upBound=80)
+P_Battery_Charge = pulp.LpVariable.dicts("P_Battery_Charge", range(time_period), lowBound=0, upBound=80)
+P_Battery_Discharge = pulp.LpVariable.dicts("P_Battery_Discharge", range(time_period), lowBound=0, upBound=80)
+P_Electrolyzer = pulp.LpVariable.dicts("P_Electrolyzer", range(time_period), lowBound=0, upBound=9.38)
+SoC_Battery = pulp.LpVariable.dicts("SoC_Battery", range(time_period + 1), lowBound=0, upBound=80)
 
-# Anfangsbedingungen
-model += SoC_Batter
+# Initial conditions
+model += SoC_Battery[0] == 0
 
-ie[0] == 0
+# Objective function
+model += pulp.lpSum(P_Electrolyzer[t] * pv_forecast[t] for t in range(time_period))
 
-# Zielfunktion
-model += pulp.lpSum(P_Elektrolyseur[t] for t in range(zeitraum))
+# Constraints
+for t in range(time_period):
+    model += SoC_Battery[t + 1] == SoC_Battery[t] + P_Battery_Charge[t] - P_Battery_Discharge[t]
+    model += P_Battery_Charge[t] - P_Battery_Discharge[t] >= 0
+    model += P_Electrolyzer[t] <= P_Battery_Discharge[t]
 
-# Randbedingungen
-for t in range(zeitraum):
-    model += pv_forecast[t] + P_Batterie_Entlade[t] == 50 + P_Batterie_Lade[t] + P_Elektrolyseur[t]  # Beispiel Hausverbrauch = 50 kW
-    if t < zeitraum - 1:
-        model += SoC_Batterie[t + 1] == SoC_Batterie[t] + P_Batterie_Lade[t] - P_Batterie_Entlade[t]
-
-# Modell lösen
+# Solve the problem
 model.solve()
 
-# Ergebnisse
-for t in range(zeitraum):
-    print(f"Stunde {t}: Elektrolyseur Leistung: {P_Elektrolyseur[t].varValue}, Batterie SoC: {SoC_Batterie[t].varValue}")
+# Output results
+print("Battery Charging and Discharging Schedule:")
+for t in range(time_period):
+    print(f"Hour {t}: Charge {P_Battery_Charge[t].varValue}, Discharge {P_Battery_Discharge[t].varValue}, Electrolyzer {P_Electrolyzer[t].varValue}")
 ```
 
-### 6. Validierung des Codes
+### 6. Validation
 
-- Simulation: Durchführung mit unterschiedlichen Parametern
-- Sensitivitätsanalyse: Wie wirken sich Veränderungen in den Vorhersagedaten auf die Optimierungsergebnisse aus?
-
-### 7. Weitere Literatur
-
-- Optimal Charge/Discharge Scheduling of Battery Storage Interconnected With Residential PV System. A. Kapoor and A. Sharma, 2020.
+- Simulation: Conduct simulations with different parameters.
+- Sensitivity Analysis: How do changes in forecast data affect the optimization results?
